@@ -8,6 +8,7 @@
 # 输入: [1,2,3,null,5,null,4]
 # 输出: [1,3,4]
 #
+from collections import defaultdict
 from typing import Optional, List
 
 import utils.tree
@@ -16,21 +17,20 @@ from utils.tree import TreeNode
 
 class Solution:
     def rightSideView(self, root: TreeNode) -> List[int]:
-        if root is None:
-            return []
-        res = []
-        levelQ,nextQ= [root],[]
-        while len(levelQ) is not 0:
-            cur = levelQ.pop(0)
-            if cur.left is not None:
-                nextQ.append(cur.left)
-            if cur.right is not None:
-                nextQ.append(cur.right)
+        res,dict = [],defaultdict(list)
+        if not root:
+            return res
 
-            if len(levelQ) is 0:
-                # if len of levelQ is 0 means cur is the rightest node
-                res.append(cur.val)
-                levelQ,nextQ = nextQ,[]
+        def preTrace(curNode,index):
+            if not curNode:
+                return
+            dict[index].append(curNode.val)
+            preTrace(curNode.left,index+1)
+            preTrace(curNode.right,index+1)
+
+        preTrace(root,0)
+
+        res = [v[-1] for v in dict.values()]
 
         return res
 
