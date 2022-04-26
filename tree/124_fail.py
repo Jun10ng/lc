@@ -12,10 +12,33 @@
 # 输入：root = [-10,9,20,null,null,15,7]
 # 输出：42
 # 解释：最优路径是 15 -> 20 -> 7 ，路径和为 15 + 20 + 7 = 42
+import sys
 from typing import Optional
 
+import utils.tree
 from utils.tree import TreeNode
 
 
 class Solution:
     def maxPathSum(self, root: Optional[TreeNode]) -> int:
+        maxRcd = -sys.maxsize
+
+        def track(rn: Optional[TreeNode]) -> int:
+            nonlocal maxRcd
+            if not rn:
+                return 0
+
+            leftMax = max(0, track(rn.left))
+            rightMax = max(0, track(rn.right))
+
+            maxRcd = max(maxRcd, leftMax + rightMax + int(rn.val))
+            return int(rn.val) + max(leftMax, rightMax)
+
+        x = track(root)
+        return max(maxRcd,x)
+
+
+if __name__ == '__main__':
+    s = Solution()
+    r = utils.tree.new_tree_from_level_str("[-10,9,20,null,null,15,7]")
+    print(s.maxPathSum(r))
